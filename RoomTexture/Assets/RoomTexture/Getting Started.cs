@@ -1,0 +1,1 @@
+﻿/// This is a Getting Started guide to help new users understand how to utilize this package to texture their room meshes.

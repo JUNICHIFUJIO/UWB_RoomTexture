@@ -1,0 +1,105 @@
+// ShaderLab stuff in Unity
+
+Shader "SHADER'S NAME" {
+	// Public variables
+	Properties{
+		// Reference name (Public name, variable type (color 2d float range)
+		_MainTexture("Public name", 2D) = "white" {}
+		_Color("Kleur", Color) = {1,1,1,1} // white
+
+		// Cheese
+		_DissolveTexture("Cheese", 2D) = "white" {}
+		_DissolveAmount("Cheese Cut Out Amount", float) = 1
+
+		// Animate
+		_ExtrudeAmount("Extrude Amount", float) = 1
+		// _ExtrudeAmount("Extrude Amount", Range(-0.1, 1.1)) = 0.3
+	}
+
+	// Have different values such as different target platforms
+	// Every shader can have multiple different subshaders
+	// Good for splitting mobile and console and pc
+	SubShader{
+		// Take data and draw it to a screen
+		// Basically a draw call
+		// Can use multiple passes per subshader
+		Pass{
+			// Gonna start writing C for graphics
+			CGPROGRAM
+
+			// Declare what your vertex and fragment functions will be called
+			#pragma vertex vertexFunction
+			#pragma fragment fragmentFunction
+
+			// Include things from different libraries
+			#include "UnityCG.cginc" // helper functions for stuff, diff. for lighting and stuffs
+
+			// Grab data you wanna use
+			// 
+			// Vertices
+			// Normal
+			// Color
+			// UVs
+			// etc.
+			struct appdata{
+				float4 vertex : POSITION;
+				float2 uv : TEXCOORD0;
+
+				float3 normal : NORMAL;
+			};
+
+			// Create v2f struct
+			struct v2f{
+				float4 position : SV_POSITION; // SOMETHING TO DO with DX platforms and ps4 - must be used to be usable for those
+				float2 uv : TEXCOORD0;
+			};
+
+			// Import items from ShaderLab into CG
+			// Create float4 to store color from ShaderLab
+			float4 _Color;
+			sampler2D _MainTexture;
+			
+			// Import cheese stuff
+			sampler2D _DissolveTexture;
+			float _DissolveAmount;
+
+			// Normals
+			float _ExtrudeAmount;
+
+			// Vertex function - build the object model from vertices
+			// v2f = vertex to fragment function
+			v2f vertexFunction(appdata IN){
+				
+				v2f OUT;
+
+				// Expand cat
+				IN.vertex.xyz += IN.normal.xyz * _ExtrudeAmount; // * sin(_Time.y) (sin of actual time - causes model pulsing)
+
+				OUT.position = mul(UNITY_MATRIX_MVP, IN.vertex); // MVP = Model View Projection - can change view from perspective to orthographic and not cause issues with texturing
+				OUT.uv = IN.uv;
+
+
+				return OUT; // return v2f struct
+			}
+
+			// color it in!
+			// SV_Target -> target stuff to the screen or everything breaks
+			fixed4 fragmentFunction(v2f IN) : SV_Target {
+
+				// Get ShaderLab data into this code
+				// Pass texture, uv
+				float4 textureColor = tex2D(_MainTexture, IN.uv);
+
+				// cheese cut outs
+				float4 dissolveColor = tex2D(_DissolveTexture, IN.uv)
+				clip(dissolveColor.rgb - _DissolveAmount); // * instead of - ?
+
+				return textureColor * _Color; // has to be multiplication to look right?
+			}
+
+			// Fragment function - color in the object
+
+			ENDCG
+		}
+	}
+}

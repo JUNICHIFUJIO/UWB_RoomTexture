@@ -1,0 +1,121 @@
+Scripts to remove:
+-- AdjustTexture (base)
+
+Scripts to add:
+-- ImageToTexture - convert an image from PhotoCaptureFrame to an image that can be saved
+-- TextureDisplay - display images captured by PhotoCaptureFrame for user to recognize visually from static class, TextureCapture (also should show position)
+-- CameraLocation - Save a struct for a camera's location using a photocaptureframe
+
+Scripts to adjust:
+-- TextureProjector
+-- InstantiateRoomMesh
+-- 
+
+Scripts to notate:
+-- FlipTexture - flip the texture passed in (i.e. for hololens photocapture frame - its image uploaded is flipped and must be corrected)
+
+
+***Need to set the layers for the projector to be correct
+
+
+THINGS TO DO:
+-- Fix shader
+-- Assign everything to the DisplayManager
+-- Assign everything to the TextureManager
+-- Assign LayerConverter script to LayerConverter prefab
+-- Complete loading the mesh (either from appdata or from the database - looks like it'll be from appdata)
+ (i.e. set things correctly depending on if it'll be in Unity or in Windows)
+-- Fill out FileNameTranslator
+-- Create and fill out debug files for unit testing
+-- Create and fill out debug files for real debugging (names of files used dynamically, etc.)
+-- Include voice command for assigning prefab dynamically (in Hololens app)
+-- Include voice command trigger receptor in CentralProcessor to automatically trigger AssignPrefabToMesh method
+-- CentralProcessor should have OnValidate where if the gameobject changes, it assigns the prefab to it
+  (SHOULD REFERENCE A PRIVATE BOOL THAT CHECKS IF THE TEXTURE PREFAB EXISTS)
+
+-- Try out blending items
+
+PROJECTED ISSUES:
+-- Figure out if submeshing is going to be an issue
+
+====IN-DEPTH PROCESS===
+   -- Import dependencies
+   -- Add TextureManager prefab to hierarchy (t)
+   -- Add DisplayManager prefab to hierarchy (t* - plain textures tested; need to test camera location files)
+   -- Add LayerConverter prefab to hierarchy (TESTED)
+
+   *-- Enable Hololens keywords (t*)
+   *-- Enable Hololens gestures (t*)
+   -- (Put instructions for taking pictures on screen)
+   *-- Activate photo capture (with keyword) (t)
+   *-- Take photos with keywords and gestures (t)
+      -- Save texture to file (TESTED - alphaclip tests it)
+         -- Manipulate texture correctly (TESTED)
+      -- Save camera location to file (TESTED - save/load a camloc file)
+      -- (Put text saying when image is being saved and when you can take another picture)
+   -- End photo capture (with keyword) (t)
+   -- Disable Hololens keywords for Capture (t)
+   -- Disable Hololens gestures for Capture (t)
+   -- (Take instructions for taking pictures off screen)
+   -- Determine if the SpatialMapping / RemoteMapping prefab is already in the hierarchy (TESTED - SpatialMappingCheck)
+   -- Generate texture prefab based off of what mesh is available
+      -- Alpha clip textures (if necessary) (TESTED)
+      -- Generate materials for textures (t - Nonprojector tested)
+   -- Convert layer for mesh appropriately (TESTED - RemoteMappingCheck)
+   -- Communicate all texture files to other clients (NOT READY)
+
+   IF NUMBER OF TEXTURES IN FOLDER IS LESS THAN 30...
+   -- Load up texture array (TESTED)
+   -- Load up cameraToWorldMatrix array (TESTED)
+   -- Load up projectionMatrix array (TESTED)
+   -- Assign material / shader for room meshes at start-up of project (t)
+   -- Assign arrays into the shader for the material (t)
+
+   ELSE IF NUMBER OF TEXTURES IN FOLDER IS GREATER THAN 30...
+   -- Assign material for room meshes at start-up of project
+   -- Load up the texture prefab
+   -- Assign the texture prefab to the room mesh object
+
+   
+***Set up the following capabilities***
+Edit > Project Settings > Player
+-- WebCam
+-- Microphone
+-- Location
+-- SpatialPerception
+
+
+***GETS THE MESH FROM REMOTEMAPPING PREFAB, NOT SPATIALMAPPING***
+FileSurfaceObserver:
+-- MeshFileName
+-- Load File Key
+-- Save File Key
+
+
+
+-- Need to get everything into AssetBundles
+-- Need to add text giving instructions
+-- Need to compress / decompress textures (?)
+-- Synchronize hook between "send mesh" cue and stopphotomode
+
+
+====PROCESS====
+   1) Open up a new project in Unity
+   2) Import dependencies
+   2) Import the package
+   3) Open up the Setting Up Guide
+//   2) Open up example scene 
+   3) Drag out the manager prefabs to the scene
+   4) Make the layer for the room texture (necessary?)
+   5) Put on the Hololens and run Unity project
+   6) Get the room mesh if it doesn't exist
+   6) Start taking images
+   7) Wait for each one to finish before grabbing the next one
+   6) Go around room, grabbing the textures
+   7) Stop taking images
+   8) Save and process the images as textures
+   9) Save and process CameraLocation files
+   10) Generate materials from the textures and shaders
+*   9) Generate the projectors
+   10) Attach projectors to the room mesh
+   11) Have stuff saved and displayed properly on the manager prefabs
