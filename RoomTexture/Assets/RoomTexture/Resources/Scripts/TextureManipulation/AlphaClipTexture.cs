@@ -111,7 +111,9 @@ namespace UWB_RoomTexture
             }
 
             // Reload the Unity Asset database
+#if UNITY_EDITOR
             UnityEditor.AssetDatabase.Refresh();
+#endif
 
             if (debug)
             {

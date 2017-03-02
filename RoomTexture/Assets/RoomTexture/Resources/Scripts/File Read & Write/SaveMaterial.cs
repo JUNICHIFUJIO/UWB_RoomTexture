@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor; // For saving assets
 
+#if UNITY_EDITOR
+using UnityEditor; // For saving assets
+#endif
 
 namespace UWB_RoomTexture
 {
@@ -13,6 +15,8 @@ namespace UWB_RoomTexture
             // Safeguard against bad input
             if (material != null)
             {
+#if UNITY_EDITOR
+                // ERROR TESTING - NOT USED IN FINAL VERSION - MIGHT AS WELL KEEP AROUND FOR FUTURE DESIRED USE?
                 AssetDatabase.CreateAsset(
                     material, // The material to be saved
 
@@ -25,6 +29,7 @@ namespace UWB_RoomTexture
                     // ERROR TESTING REMOVE - old parameters to material saving
                     //material, Constants.Folders.MaterialFolderPath + material.name + Constants.Suffixes.FileSuffix_Material);
                 AssetDatabase.SaveAssets();
+#endif
             }
         }
     }

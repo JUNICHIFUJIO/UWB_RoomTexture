@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace UWB_RoomTexture {
     public class CentralProcessor : MonoBehaviour {
@@ -69,11 +72,15 @@ namespace UWB_RoomTexture {
                 ProjectorChild.name = textureProjector.name;
             }
 
+#if UNITY_EDITOR
             // Create a prefab of all the projectors
             GameObject prefab = PrefabUtility.CreatePrefab(Constants.Folders.PrefabFolderPath + RoomTextureObject.name, RoomTextureObject);
             SaveTexturePrefab.Save();
             AssetDatabase.Refresh();
             AssetDatabase.SaveAssets(); // ERROR TESTING - is this the correct order?
+#else
+            GameObject prefab = null;
+#endif
 
             return prefab;
         }
@@ -118,8 +125,18 @@ namespace UWB_RoomTexture {
         public static void AttachPrefabToObject(GameObject obj)
         {
             if (obj != null) {
-                GameObject texturePrefab = PrefabUtility.InstantiatePrefab(Resources.Load(Constants.Folders.PrefabFolderPath + Constants.Names.TexturePrefabName + Constants.Suffixes.FileSuffix_Prefab)) as GameObject;
-                texturePrefab.transform.parent = obj.transform;
+#if UNITY_EDITOR
+                string prefabFilepath = Constants.Folders.PrefabFolderPath + Constants.Names.TexturePrefabName + Constants.Suffixes.FileSuffix_Prefab;
+                if (Directory.Exists(prefabFilepath))
+                {
+                    GameObject texturePrefab = PrefabUtility.InstantiatePrefab(Resources.Load(prefabFilepath)) as GameObject;
+                    texturePrefab.transform.parent = obj.transform;
+                }
+#else
+                // ERROR TESTING REMOVE - How do I adjust for this in the final version?
+                GameObject texturePrefab = null;
+#endif
+                //texturePrefab.transform.parent = obj.transform;
             }
         }
 

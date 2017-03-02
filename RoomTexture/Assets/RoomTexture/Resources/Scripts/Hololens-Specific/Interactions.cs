@@ -54,10 +54,7 @@ namespace UWB_RoomTexture
 
             if (enabled)
             {
-                string[] keywordArray = new string[keywords.Keys.Count];
-                keywords.Keys.CopyTo(keywordArray, 0);
-                keywordRecognizer = new KeywordRecognizer(keywordArray);
-                keywordRecognizer.OnPhraseRecognized += KeywordRecognizer_OnPhraseRecognized;
+                RefreshKeywordRecognizer();
             }
         }
 
@@ -71,10 +68,21 @@ namespace UWB_RoomTexture
 
         public static void DisableVoiceCommand(Constants.Commands.VoiceCommandsEnum command)
         {
+            bool disabled = false;
+
             if (command == Constants.Commands.VoiceCommandsEnum.BeginRoomTexture)
+            {
                 keywords.Remove(Constants.Commands.Keyword_BeginRoomTexturing);
+                disabled = true;
+            }
             else if (command == Constants.Commands.VoiceCommandsEnum.EndRoomTexture)
+            {
                 keywords.Remove(Constants.Commands.Keyword_EndRoomTexturing);
+                disabled = true;
+            }
+
+            if (disabled)
+                RefreshKeywordRecognizer();
 
             if (keywords.Count == 0)
                 keywordRecognizer.OnPhraseRecognized -= KeywordRecognizer_OnPhraseRecognized;
@@ -83,6 +91,24 @@ namespace UWB_RoomTexture
         // ERROR TESTING 
         // public void enableGesture(s)
 
+        public static void RefreshKeywordRecognizer()
+        {
+            // Erase the old keyword recognizer
+            if (keywordRecognizer != null)
+            {
+                keywordRecognizer.OnPhraseRecognized -= KeywordRecognizer_OnPhraseRecognized;
+                keywordRecognizer.Stop();
+                keywordRecognizer.Dispose();
+                keywordRecognizer = null;
+            }
+
+            // Reboot keyword recognizer with refreshed keywords
+            string[] keywordArray = new string[keywords.Keys.Count];
+            keywords.Keys.CopyTo(keywordArray, 0);
+            keywordRecognizer = new KeywordRecognizer(keywordArray);
+            keywordRecognizer.OnPhraseRecognized += KeywordRecognizer_OnPhraseRecognized;
+            keywordRecognizer.Start();
+        }
 
         // Handle logic for directing phrase recognition calls to the
         // appropriate method.
@@ -112,7 +138,16 @@ namespace UWB_RoomTexture
         {
             if (gesture == Constants.Commands.GesturesEnum.RoomScreenshot)
             {
+                if (gestureRecognizer == null)
+                {
+                    gestureRecognizer = new GestureRecognizer();
+                }
+                else
+                {
+                    gestureRecognizer.StopCapturingGestures();
+                }
                 gestureRecognizer.TappedEvent += GestureRecognizer_OnTappedEvent;
+                gestureRecognizer.StartCapturingGestures();
             }
             else
                 throw new System.Exception(Constants.ErrorStrings.GestureNotFound);
@@ -122,7 +157,13 @@ namespace UWB_RoomTexture
         {
             if (gesture == Constants.Commands.GesturesEnum.RoomScreenshot)
             {
-                gestureRecognizer.TappedEvent -= GestureRecognizer_OnTappedEvent;
+                // ERROR TESTING - NEED TO ACCOUNT FOR WHEN GESTURERECOGNIZER IS EMPTY AND WHEN I CAN DESTROY / NULL IT OUT
+                if (gestureRecognizer != null)
+                {
+                    gestureRecognizer.StopCapturingGestures();
+                    gestureRecognizer.TappedEvent -= GestureRecognizer_OnTappedEvent;
+                    gestureRecognizer.StartCapturingGestures();
+                }
             }
             else
                 throw new System.Exception(Constants.ErrorStrings.GestureNotFound);

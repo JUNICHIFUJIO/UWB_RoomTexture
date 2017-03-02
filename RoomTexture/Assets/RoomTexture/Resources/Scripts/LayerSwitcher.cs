@@ -1,9 +1,8 @@
-﻿// ERROR TESTING USE ONLY SETLAYER, NOT CHANGEMESHLAYER
+﻿// ERROR TESTING - Maybe USE ONLY SETLAYER, NOT CHANGEMESHLAYER
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 namespace UWB_RoomTexture {
     public class LayerSwitcher : MonoBehaviour {

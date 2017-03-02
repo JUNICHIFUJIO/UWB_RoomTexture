@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VR.WSA.WebCam;
-using UnityEditor;
 
 namespace UWB_RoomTexture
 {
@@ -46,7 +45,11 @@ namespace UWB_RoomTexture
                 Texture2D tex = LoadTexture.Load(TextureFilePath);
                 //Material mat = MaterialMaker.GenerateRoomMaterial(tex, RoomTexture.Projector_MaterialAutoName + camLoc.name);
                 Material mat = MaterialMaker.GenerateRoomMaterial(tex);
+#if UNITY_EDITOR
+                // ERROR TESTING - DOESN'T EVEN APPLY TO FINAL BUILD
                 SaveMaterial.Save(mat);
+#endif
+                
                 //                AssetDatabase.CreateAsset(mat, RoomTexture.MaterialFolderPath + mat.name);
                 //               AssetDatabase.Refresh();
                 newProjector.material = mat;
@@ -117,7 +120,10 @@ namespace UWB_RoomTexture
                 Texture2D tex = LoadTexture.Load(TextureFilePath);
                 //Material mat = MaterialMaker.GenerateRoomMaterial(tex, RoomTexture.Projector_MaterialAutoName + camLoc.name);
                 Material mat = MaterialMaker.GenerateRoomMaterial(tex);
+#if UNITY_EDITOR
+                // ERROR TESTING - DOESN'T EVEN APPLY TO FINAL BUILD
                 SaveMaterial.Save(mat);
+#endif
                 //                AssetDatabase.CreateAsset(mat, RoomTexture.MaterialFolderPath + mat.name);
                 //               AssetDatabase.Refresh();
                 newProjector.material = mat;

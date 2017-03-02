@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor; // For saving the material into the editor 
-// ERROR TESTING - WILL THIS CAUSE ISSUES OUTSIDE OF THE EDITOR (i.e. WHEN THE APPLICATION IS MADE FROM THIS PROGRAM?)
 
 namespace UWB_RoomTexture
 {

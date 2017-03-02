@@ -9,6 +9,8 @@ namespace UWB_RoomTexture
     {
         public class Debug_LoadMesh : MonoBehaviour
         {
+            // ERROR TESTING REMOVE THIS IN FINAL DEBUG RUN
+            /*
             public string Load;
 
             // Use this for initialization
@@ -42,6 +44,7 @@ namespace UWB_RoomTexture
 
                 return passed;
             }
+            */
         }
     }
 }

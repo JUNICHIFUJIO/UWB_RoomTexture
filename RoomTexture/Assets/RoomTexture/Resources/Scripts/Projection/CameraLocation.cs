@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VR.WSA.WebCam; // For PhotoCaptureFrame
 using System.IO;
-using UnityEditor;
 using System; // For platform-specific newlines (Environment)
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace UWB_RoomTexture
 {
-    public class CameraLocation : MonoBehaviour
+    // ERROR TESTING - REMOVE INHERITANCE - UNNEEDED
+    public class CameraLocation //: MonoBehaviour
     {
         private bool hasLocationData;
         private Matrix4x4 cameraToWorldTransform;
@@ -131,7 +135,10 @@ namespace UWB_RoomTexture
                 + farClipPlaneString
             );
 
+#if UNITY_EDITOR
+            // Immediately update folders / files shown
             AssetDatabase.Refresh();
+#endif
         }
 
         public static CameraLocation Load(string filepath)
